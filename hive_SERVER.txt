@@ -1,0 +1,53 @@
+*****hiveserver runs on portno 10000
+
+***** For hive 2 in hadoop 2 configuration we had to change the core-site.xml file for client,server in hadoop 2 
+<property>
+    <name>hadoop.proxyuser.hadoop.hosts</name>
+        <value>*</value>
+         </property>
+         <property>
+             <name>hadoop.proxyuser.hadoop.groups</name>
+                 <value>*</value>
+                 </property>
+
+-----The above lines are to added with existing core-site.xml in master1 and slave1 or in all master and slave
+-----then reboot your hadoop 
+
+
+****The default username and password is hive and hive
+export HIVE_HOME=/sda3/hive
+export PATH=$PATH:$HIVE_HOME/bin
+
+hive-hwi-*.war: No such file or directory
+
+hive --service hwi
+
+http://documentation.altiscale.com/hdfs-trash-and-skiptrash
+
+http://getindata.com/blog/tutorials/creating-hdfs-snapshots-and-recovering-a-deleted-file/
+
+/sda3/ant/lib
+
+export ANT_LIB=/sda3/ant/lib
+
+!connect jdbc:hive2://1.1.1.2:10000 hive hive org.apache.hive.jdbc.HiveDriver 
+
+0: jdbc:hive2://1.1.1.2:10000> SHOW TABLES;
+
+
+hiveserver2 &
+export ANT_LIB=/sda3/ant/lib
+hadoop fs -chmod -R 777   /tmp/hadoop-yarn
+hadoop fs -chmod -R 777   /user
+
+beeline
+
+beeline> !connect jdbc:hive2://1.1.1.106:10000 hive hive org.apache.hive.jdbc.HiveDriver
+
+0: jdbc:hive2://1.1.1.2:10000> show tables;
+
+**** DOWNLOAD the hive odbc driver from
+
+http://www.microsoft.com/en-us/download/details.aspx?id=40886
+
+
