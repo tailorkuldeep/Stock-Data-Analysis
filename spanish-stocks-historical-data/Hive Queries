@@ -1,0 +1,107 @@
+----To display the no of records
+
+select * from em1 where en='RAJESH' limit 10;
+
+----To insert the records in append mode
+
+LOAD DATA LOCAL INPATH '/home/biadmin/book1.csv' INTO TABLE emp2;
+
+----To insert the records in overwrite mode
+
+LOAD  DATA LOCAL INPATH '/home/biadmin/book1.csv' overwrite INTO TABLE emp2;
+
+----Distinct clause
+
+ select distinct en from em1;
+
+ select count(distinct en) from em1;
+
+
+select count(en) from em1 group by en;
+
+
+----To Unique IPs Sorted by Number of Accesses
+
+
+SELECT ip, COUNT(1) AS cnt FROM www_access GROUP BY ip ORDER BY cnt DESC LIMIT 30;
+
+
+----To insert data from one table to another
+
+insert into table emp2 select * from em1 limit 4;
+
+insert overwrite table emp2 select * from em1 limit 4;
+
+
+ALTER TABLE em1 ADD COLUMNS (sal decimal);
+
+ALTER TABLE  em1 rename to em2;
+
+ALTER TABLE old_table_name REPLACE COLUMNS (col1 TYPE, ...);
+
+----To copy the structure of a table into a new table
+
+create table emp2 like emp;
+
+hadoop fs -put emp.txt /user/hive/warehouse/emp2/emp2.txt
+
+
+hadoop fsck /user/hive/warehouse/emp2/emp2.txt -files -blocks -locations
+
+########
+
+CREATING A PARTITION
+
+winscp the emp3.txt file 
+
+then create the five files for five countries and partitions
+
+grep india emp3.txt>india.txt
+grep russia emp3.txt>russia.txt
+grep china emp3.txt>china.txt
+grep japan emp3.txt>japan.txt
+grep america emp3.txt>america.txt
+
+----Check the files are created properly
+
+ls|grep a|grep txt
+
+----Create the table in hive for partition country
+
+CREATE TABLE empc (eid INT, en STRING,mob string) PARTITIONED BY (country String) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',';
+
+describe formatted empc;
+
+----Now load the partitions files individually into the empc table partion wise
+
+LOAD DATA local INPATH '/home/hadoop/america.txt' OVERWRITE INTO TABLE empc PARTITION (country='america');
+LOAD DATA local INPATH '/home/hadoop/india.txt' OVERWRITE INTO TABLE empc PARTITION (country='india');
+LOAD DATA local INPATH '/home/hadoop/china.txt' OVERWRITE INTO TABLE empc PARTITION (country='china');
+LOAD DATA local INPATH '/home/hadoop/japan.txt' OVERWRITE INTO TABLE empc PARTITION (country='japan');
+LOAD DATA local INPATH '/home/hadoop/russia.txt' OVERWRITE INTO TABLE empc PARTITION (country='russia');
+
+----From another termianl you check the hdfs dir structure for partitions
+
+hadoop fs -ls /user/hive/warehouse/empc
+
+hadoop fs -ls /user/hive/warehouse/empc/country=japan
+
+----cat any one file
+
+hadoop fs -cat /user/hive/warehouse/empc/country=japan/japan.txt
+
+hive>select * from empc;
+hive>select * from empc order by eid;
+hive>select * from empc where country='america';
+
+
+----partition for date
+
+LOAD INPATH '/user/chris/data/testdata' OVERWRITE INTO TABLE user PARTITION (date='2012-02-22')
+
+ALTER TABLE user ADD PARTITION(date='2010-02-22');
+
+alter table empc drop partition(country='russia');
+alter table empc add partition(country='russia');
+
+
