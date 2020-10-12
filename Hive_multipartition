@@ -1,0 +1,56 @@
+####### 	MULTI PARTITION IN HADOOP	#######
+
+CREATE TABLE user1(firstname VARCHAR(64),lastname  VARCHAR(64),address   STRING) PARTITIONED BY (country VARCHAR(64), state VARCHAR(64)) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' location '/tab1/';
+
+vi city.log
+Rebbecca,Didio,171 E 24th St
+Stevie,Hallo,22222 Acoma St
+Mariko,Stayer,534 Schoenborn St #51
+esc:wq
+
+
+LOAD DATA LOCAL INPATH '/home/hadoop/city.txt' INTO TABLE user1 PARTITION (country = 'us', state = 'ls');
+
+select * from user1;
+
+
+
+hadoop fs -ls -R /tab1
+
+
+
+CREATE TABLE user2(firstname VARCHAR(64),lastname  VARCHAR(64),address   STRING) PARTITIONED BY (country VARCHAR(64), state VARCHAR(64)) ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' location '/tab2/';
+
+hadoop fs -ls -R /tab2
+
+alter table user2 add partition (country = 'us', state = 'ls');
+
+hadoop fs -ls -R /tab2
+
+hadoop fs -put city.log /tab2/country=us/state=ls
+
+hadoop fs -ls -R /tab2
+
+select * from user2;
+
+
+----Flume to Hive
+
+CREATE EXTERNAL TABLE log5(date_host string,time string,sec string,security string,error string) PARTITIONED BY (year int, month int,day int, hour int) ROW FORMAT DELIMITED FIELDS TERMINATED BY ':' LOCATION '/flume_log2';
+
+ALTER TABLE log5 ADD PARTITION (year=2015, month=08, day=22, hour=02) location '/flume_log2/year=2015/month=08/day=22/hour=02';
+
+select * from log5;
+
+
+
+
+CREATE TABLE demo_tab 
+(
+    stadt STRING,
+    geograph_breite FLOAT,
+    id INT
+)
+PARTITIONED BY (land STRING)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY "\073";
+
