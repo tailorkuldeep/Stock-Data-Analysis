@@ -1,0 +1,65 @@
+what is bucketing?
+Buckets in hive is used in segregating of hive table-data into multiple files or directories. it is used for efficient querying. 
+The data i.e. present in that partitions can be divided further into Buckets 
+The division is performed based on Hash of particular columns that we selected in the table. 
+Buckets use some form of Hashing algorithm at back end to read each record and place it into buckets.
+
+creating partion table..........
+
+create table all_states(state string, District string,Enrolments string) row format delimited fields terminated by ',';
+
+
+** create a file of the states
+nano states
+westbengal,south24parganas,700021
+rajasthan,churu,302102
+bihar,sasaram,848421
+
+
+-- loading the data from ext4 to hive
+load data local inpath '/home/hadoop/states' into table all_states;
+
+** now create a table for partioning...
+create table state_part(District string,Enrolments string) PARTITIONED BY(state string);
+
+For partition we have to set this property 
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+now to insert---
+INSERT OVERWRITE TABLE state_part PARTITION(state) SELECT district,enrolments,state from  all_states;
+
+now from hdfs check the number of partion----
+
+hadoop fs -ls /user/hive/warehouse/all_states
+
+
+// we created a table with the name "emp1"
+
+create table empl (first_name string, job_id int, department string, salary string, country string) row format delimited fields terminated by ',';
+
+nano emplyee.txt
+
+ravi,123,cs,50000,india
+vicky,13,manager,52000,india
+hardik,233,cs,34000,india
+dev,132,cs,64000,india
+varun,133,cs,23000,india
+
+save
+
+// *** load data into empl ***
+
+//create a samplebucket table-
+
+create table samplebucket (first_name string, job_id int, department string, salary string, country string) clustered by (country) into 4 buckets row format delimited fields terminated by ',';
+
+
+//Here we are loading data into samplebucket from employees table
+
+from st insert overwrite table samplebucket select first_name,job_id,department, salary, country;
+
+hadoop fs -ls /user/hive/warehouse/samplebucket
+
+
+
